@@ -9,7 +9,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --parchment:#F0E6CC;--ink:#1C0F08;--ink-mid:#3D2010;
-  --gold:#7A5C18;--red:#6B2020;
+  --gold:#7A5C18;--red:#6B2020;--amber:#A06010;
   --border:#8B6820;--border-light:#C4A850;
   --field-bg:rgba(255,255,255,0.55);--field-border:#9B7830;
   --section-bg:rgba(139,104,32,0.08);
@@ -17,22 +17,55 @@
 body{background:#1A0E05;display:flex;flex-direction:column;align-items:center;gap:0;padding:0 0 40px;font-family:'Crimson Text',serif}
 
 /* ── TOOLBAR ── */
-.toolbar{width:880px;display:flex;align-items:center;gap:10px;padding:14px 0 12px;position:sticky;top:0;z-index:100;background:#1A0E05;border-bottom:1px solid #3A2010}
-.tb-logo{font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:#8B6820;text-transform:uppercase;flex:1}
-.tb-status{font-family:'Crimson Text',serif;font-size:11px;color:#6B8B30;font-style:italic;opacity:0;transition:opacity 0.4s}
+.toolbar{width:100%;max-width:900px;display:flex;align-items:center;gap:8px;padding:12px 10px;position:sticky;top:0;z-index:200;background:#1A0E05;border-bottom:1px solid #3A2010;flex-wrap:wrap}
+.tb-logo{font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:#8B6820;text-transform:uppercase;flex:1;min-width:100px}
+.tb-status{font-family:'Crimson Text',serif;font-size:11px;color:#6B8B30;font-style:italic;opacity:0;transition:opacity 0.4s;white-space:nowrap}
 .tb-status.show{opacity:1}
-.tb-btn{font-family:'Cinzel',serif;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:7px 14px;border-radius:3px;cursor:pointer;border:1px solid;transition:all 0.15s}
+.tb-btn{font-family:'Cinzel',serif;font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:3px;cursor:pointer;border:1px solid;transition:all 0.15s;white-space:nowrap}
 .tb-save{background:#3A2A08;color:#C4A850;border-color:#8B6820}
-.tb-save:hover{background:#4A3A10;color:#E0C060}
+.tb-save:hover{background:#4A3A10}
 .tb-export{background:#0A2010;color:#60A870;border-color:#2A6840}
-.tb-export:hover{background:#0E2A18;color:#80C890}
+.tb-export:hover{background:#0E2A18}
 .tb-import{background:#1A0A20;color:#9070C0;border-color:#5A3890}
-.tb-import:hover{background:#221030;color:#B090E0}
+.tb-import:hover{background:#221030}
+.tb-weapons{background:#20100A;color:#C08050;border-color:#804020}
+.tb-weapons:hover{background:#2A180E}
 .tb-reset{background:#200808;color:#C06060;border-color:#803030}
-.tb-reset:hover{background:#2A0E0E;color:#E08080}
-#importFile{display:none}
+.tb-reset:hover{background:#2A0E0E}
+#importFile,#importWeapFile{display:none}
 
-.page-wrap{display:flex;flex-direction:column;align-items:center;gap:28px;padding-top:24px}
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.hidden{display:none}
+.modal-box{background:var(--parchment);border:2px solid var(--border);border-radius:4px;padding:20px;width:520px;max-width:95vw;max-height:88vh;overflow-y:auto;position:relative}
+.modal-box::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(139,104,32,0.04) 30px,rgba(139,104,32,0.04) 31px);pointer-events:none}
+.modal-title{font-family:'Cinzel Decorative',serif;font-size:16px;font-weight:700;color:var(--ink);letter-spacing:2px;text-align:center;margin-bottom:14px;position:relative;z-index:1}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;font-size:18px;color:var(--gold);cursor:pointer;font-family:'Cinzel',serif;z-index:2}
+.modal-close:hover{color:var(--red)}
+.modal-section-lbl{font-family:'Cinzel',serif;font-size:9px;font-weight:600;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin:12px 0 6px;position:relative;z-index:1}
+.modal-form{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-bottom:10px;position:relative;z-index:1}
+.modal-form-full{grid-column:1/-1}
+.mf-lbl{font-family:'Cinzel',serif;font-size:7.5px;font-weight:600;letter-spacing:1px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:2px}
+.mf-inp,.mf-sel{background:var(--field-bg);border:1px solid var(--field-border);font-family:'Crimson Text',serif;font-size:12px;color:var(--ink);outline:none;width:100%;padding:4px 6px;border-radius:2px}
+.mf-inp:focus,.mf-sel:focus{border-color:var(--red)}
+.modal-add-btn{font-family:'Cinzel',serif;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 18px;background:#3A2A08;color:#C4A850;border:1px solid var(--border);border-radius:3px;cursor:pointer;width:100%;margin-top:4px}
+.modal-add-btn:hover{background:#4A3A10}
+.modal-list{position:relative;z-index:1;margin-top:8px}
+.modal-item{display:flex;align-items:center;gap:8px;padding:5px 8px;border-bottom:0.5px solid rgba(139,104,32,0.3);font-family:'Crimson Text',serif;font-size:12px;color:var(--ink)}
+.modal-item:last-child{border-bottom:none}
+.modal-item-name{flex:1;font-weight:600}
+.modal-item-stats{font-size:11px;color:var(--ink-mid);font-style:italic}
+.modal-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0 4px;flex-shrink:0}
+.modal-del:hover{color:#8B3030}
+.modal-io-row{display:flex;gap:8px;margin-top:12px;position:relative;z-index:1}
+.modal-io-btn{flex:1;font-family:'Cinzel',serif;font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:7px;border-radius:3px;cursor:pointer;border:1px solid;text-align:center}
+.modal-exp-w{background:#0A2010;color:#60A870;border-color:#2A6840}
+.modal-imp-w{background:#1A0A20;color:#9070C0;border-color:#5A3890}
+.modal-empty{font-family:'Crimson Text',serif;font-size:12px;color:var(--ink-mid);font-style:italic;text-align:center;padding:10px;position:relative;z-index:1}
+
+/* ── PAGE WRAP ── */
+.page-wrap{display:flex;flex-direction:column;align-items:center;gap:28px;padding-top:20px;width:100%}
+.sheet-outer{transform-origin:top center}
 .page-label{color:#8B6820;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:-20px}
 .sheet{background:var(--parchment);width:880px;position:relative;border:3px solid var(--border);outline:1px solid var(--border-light);outline-offset:-8px;box-shadow:0 0 60px rgba(0,0,0,0.8);overflow:hidden}
 .sheet::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(139,104,32,0.04) 30px,rgba(139,104,32,0.04) 31px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(139,104,32,0.03) 40px,rgba(139,104,32,0.03) 41px);pointer-events:none;z-index:0}
@@ -55,6 +88,7 @@ body{background:#1A0E05;display:flex;flex-direction:column;align-items:center;ga
 .fi{background:transparent;border:none;border-bottom:1px solid var(--field-border);font-family:'Crimson Text',serif;font-size:13px;color:var(--ink);outline:none;padding:1px 3px;width:100%}
 .fi:focus{border-bottom-color:var(--red)}
 .header-right .fi{text-align:right}
+select.fi{cursor:pointer;appearance:auto}
 .st{font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:3px;color:var(--gold);text-align:center;text-transform:uppercase;position:relative;margin:8px 0 6px}
 .st::before,.st::after{content:'';position:absolute;top:50%;width:calc(50% - 70px);height:1px;background:var(--border-light)}
 .st::before{left:0}.st::after{right:0}
@@ -84,22 +118,38 @@ select.ssel option:first-child{color:var(--gold);font-style:italic}
 .sb-inp{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);background:var(--field-bg);font-family:'Cinzel',serif;font-size:10px;color:var(--ink);text-align:center;outline:none;padding:0;flex-shrink:0}
 .sb-inp:focus{border-color:var(--red)}
 
-/* BOTTOM ROW */
-.brow{display:grid;grid-template-columns:100px 1fr 128px;gap:10px;margin-bottom:8px;align-items:start}
-.piet{background:var(--section-bg);border:1px solid var(--border-light);border-radius:3px;padding:8px;text-align:center}
-.piet-lbl{font-family:'Cinzel',serif;font-size:9px;font-weight:600;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:6px}
-.piet-v{background:var(--field-bg);border:1px solid var(--field-border);border-radius:2px;width:52px;height:32px;font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink);text-align:center;outline:none;display:block;margin:0 auto 4px}
-.piet-ml{font-family:'Cinzel',serif;font-size:7.5px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
-.piet-m{background:var(--field-bg);border:1px solid var(--field-border);border-radius:2px;width:40px;height:22px;font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--ink-mid);text-align:center;outline:none;display:block;margin:0 auto}
+/* BOTTOM ROW – redesigned */
+.brow{display:grid;grid-template-columns:155px 1fr 128px;gap:10px;margin-bottom:8px;align-items:start}
+
+/* PIETAS BLOCK */
+.piet{background:var(--section-bg);border:1px solid var(--border-light);border-radius:3px;padding:7px 8px}
+.piet-lbl{font-family:'Cinzel',serif;font-size:9px;font-weight:600;letter-spacing:2px;color:var(--gold);text-transform:uppercase;text-align:center;margin-bottom:5px}
+.piet-top{display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:5px}
+.piet-v{background:var(--field-bg);border:1px solid var(--field-border);border-radius:2px;width:46px;height:30px;font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink);text-align:center;outline:none}
+.piet-v:focus{border-color:var(--amber)}
+.piet-maxbox{display:flex;flex-direction:column;align-items:center;gap:1px}
+.piet-maxlbl{font-family:'Cinzel',serif;font-size:6.5px;color:var(--gold);letter-spacing:1px;text-transform:uppercase}
+.piet-max{background:var(--field-bg);border:1px solid var(--field-border);border-radius:2px;width:34px;height:20px;font-family:'Cinzel',serif;font-size:11px;font-weight:600;color:var(--amber);text-align:center;outline:none}
+.pb-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;direction:rtl;margin-top:4px}
+.pb{width:100%;aspect-ratio:1;border-radius:50%;border:1px solid var(--amber);background:rgba(160,96,16,0.25);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:6.5px;color:var(--amber);direction:ltr;user-select:none;font-weight:600;transition:background 0.1s}
+.pb:hover{border-color:var(--gold)}
+.pb.spent{background:rgba(160,96,16,0.08);border-color:rgba(160,96,16,0.3);color:rgba(160,96,16,0.3)}
+.pb.above-max{opacity:0.15;pointer-events:none}
+
+/* PV BLOCK */
 .pv-blk{background:var(--section-bg);border:1px solid var(--border-light);border-radius:3px;padding:6px 8px}
-.pv-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.pv-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;gap:6px}
 .pv-lbl{font-family:'Cinzel',serif;font-size:9px;font-weight:600;letter-spacing:2px;color:var(--gold);text-transform:uppercase}
+.pv-max-lbl{font-family:'Cinzel',serif;font-size:8px;color:var(--red);font-weight:600;white-space:nowrap}
 .pv-cura{display:flex;align-items:center;gap:4px;font-family:'Cinzel',serif;font-size:8px;letter-spacing:1px;color:var(--gold);text-transform:uppercase}
 .pv-cura input{width:14px;height:14px;cursor:pointer;accent-color:var(--red)}
 .pv-bubbles{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;direction:rtl}
 .pvb{width:100%;aspect-ratio:1;border-radius:50%;border:1px solid var(--border);background:var(--field-bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:7px;color:var(--ink-mid);direction:ltr;user-select:none;font-weight:600;transition:background 0.1s,color 0.1s}
 .pvb:hover{border-color:var(--red)}
 .pvb.marked{background:var(--red);color:var(--parchment);border-color:var(--red)}
+.pvb.above-max{opacity:0.15;pointer-events:none}
+
+/* MOLT */
 .molt-blk{background:var(--section-bg);border:1px solid var(--border-light);border-radius:3px;padding:6px 8px}
 .molt-lbl{font-family:'Cinzel',serif;font-size:9px;font-weight:600;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;text-align:center;margin-bottom:5px}
 .mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
@@ -166,26 +216,83 @@ select.esel:focus{border-color:var(--red)}
 .edot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-bottom:1px}
 .ebi{background:transparent;border:none;border-bottom:1px solid rgba(139,104,32,0.4);font-family:'Crimson Text',serif;font-size:12px;color:var(--ink);outline:none;flex:1;padding:1px 3px;font-style:italic}
 .ebi:focus{border-bottom-color:var(--red)}
+
+/* CALC HINT */
+.calc-hint{font-family:'Crimson Text',serif;font-size:10px;color:var(--amber);font-style:italic;text-align:center;margin-top:3px;min-height:14px}
 </style>
 </head>
 <body>
 
 <!-- TOOLBAR -->
 <div class="toolbar">
-  <div class="tb-logo">✦ Lex Arcana — Scheda Custos</div>
+  <div class="tb-logo">✦ Lex Arcana</div>
   <span class="tb-status" id="tbStatus">Salvato ✓</span>
   <button class="tb-btn tb-save" onclick="manualSave()">💾 Salva</button>
-  <button class="tb-btn tb-export" onclick="exportJSON()">↓ Esporta JSON</button>
-  <button class="tb-btn tb-import" onclick="document.getElementById('importFile').click()">↑ Importa JSON</button>
+  <button class="tb-btn tb-export" onclick="exportJSON()">↓ Esporta</button>
+  <button class="tb-btn tb-import" onclick="document.getElementById('importFile').click()">↑ Importa</button>
   <input type="file" id="importFile" accept=".json" onchange="importJSON(event)">
-  <button class="tb-btn tb-reset" onclick="resetAll()">✕ Nuova scheda</button>
+  <button class="tb-btn tb-weapons" onclick="openArmiModal()">⚔ Gestione Armi</button>
+  <button class="tb-btn tb-reset" onclick="resetAll()">✕ Nuova</button>
+</div>
+
+<!-- WEAPONS MODAL -->
+<div class="modal-overlay hidden" id="armiModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeArmiModal()">✕</button>
+    <div class="modal-title">Gestione Armi</div>
+
+    <div class="modal-section-lbl">Aggiungi arma personalizzata</div>
+    <div class="modal-form">
+      <div>
+        <label class="mf-lbl">Nome arma</label>
+        <input class="mf-inp" id="mw-nome" type="text" placeholder="Es. Spatha di fuoco">
+      </div>
+      <div>
+        <label class="mf-lbl">Tipo</label>
+        <select class="mf-sel" id="mw-tipo">
+          <option value="melee">Ravvicinata</option>
+          <option value="ranged">A distanza</option>
+        </select>
+      </div>
+      <div>
+        <label class="mf-lbl">Danno / Difficoltà</label>
+        <input class="mf-inp" id="mw-dan" type="text" placeholder="Es. 8">
+      </div>
+      <div>
+        <label class="mf-lbl">Ingombro</label>
+        <input class="mf-inp" id="mw-ing" type="number" min="0" max="20" placeholder="Es. 3">
+      </div>
+      <div class="modal-form-full">
+        <label class="mf-lbl">Caratteristiche (opzionale)</label>
+        <input class="mf-inp" id="mw-car" type="text" placeholder="Es. Versatile, A due mani">
+      </div>
+      <div class="modal-form-full" id="mw-git-row" style="display:none">
+        <label class="mf-lbl">Gittata</label>
+        <select class="mf-sel" id="mw-git">
+          <option value="Corta">Corta</option>
+          <option value="Media">Media</option>
+          <option value="Lunga" selected>Lunga</option>
+        </select>
+      </div>
+    </div>
+    <button class="modal-add-btn" onclick="addCustomWeapon()">+ Aggiungi arma</button>
+
+    <div class="modal-section-lbl">Armi personalizzate salvate</div>
+    <div class="modal-list" id="mw-list"></div>
+
+    <div class="modal-io-row">
+      <button class="modal-io-btn modal-exp-w" onclick="exportWeapons()">↓ Esporta lista armi</button>
+      <button class="modal-io-btn modal-imp-w" onclick="document.getElementById('importWeapFile').click()">↑ Importa lista armi</button>
+      <input type="file" id="importWeapFile" accept=".json" onchange="importWeapons(event)">
+    </div>
+  </div>
 </div>
 
 <div class="page-wrap">
 
 <!-- ══════════ FRONTE ══════════ -->
 <div class="page-label">✦ Fronte ✦</div>
-<div class="sheet">
+<div class="sheet-outer" id="so1"><div class="sheet">
   <div class="corner corner-tl"><svg viewBox="0 0 30 30" fill="none"><path d="M2 28L2 2L28 2" stroke="#8B6820" stroke-width="2"/><path d="M6 24L6 6L24 6" stroke="#C4A850" stroke-width="1"/><circle cx="6" cy="6" r="2" fill="#8B6820"/></svg></div>
   <div class="corner corner-tr"><svg viewBox="0 0 30 30" fill="none"><path d="M2 28L2 2L28 2" stroke="#8B6820" stroke-width="2"/><path d="M6 24L6 6L24 6" stroke="#C4A850" stroke-width="1"/><circle cx="6" cy="6" r="2" fill="#8B6820"/></svg></div>
   <div class="corner corner-bl"><svg viewBox="0 0 30 30" fill="none"><path d="M2 28L2 2L28 2" stroke="#8B6820" stroke-width="2"/><path d="M6 24L6 6L24 6" stroke="#C4A850" stroke-width="1"/><circle cx="6" cy="6" r="2" fill="#8B6820"/></svg></div>
@@ -206,19 +313,29 @@ select.esel:focus{border-color:var(--red)}
   <div class="header-right">
     <div class="fl"><input class="fi" id="f_eta" style="width:70px;text-align:right" type="text"><span class="fl-lbl">Età</span></div>
     <div class="fl"><input class="fi" id="f_sesso" style="width:70px;text-align:right" type="text"><span class="fl-lbl">Sesso</span></div>
-    <div class="fl"><input class="fi" id="f_qualifica" style="width:110px;text-align:right" type="text"><span class="fl-lbl">Qualifica</span></div>
-    <div class="fl"><input class="fi" id="f_grado" style="width:110px;text-align:right" type="text"><span class="fl-lbl">Grado</span></div>
+    <div class="fl">
+      <select class="fi" id="f_qualifica" style="width:120px;text-align:right" onchange="calcStats();autoSave()">
+        <option value="">— Qualifica —</option>
+        <option value="Augure">Augure</option>
+        <option value="Diplomatico">Diplomatico</option>
+        <option value="Esploratore">Esploratore</option>
+        <option value="Guerriero">Guerriero</option>
+        <option value="Sapiente">Sapiente</option>
+      </select>
+      <span class="fl-lbl">Qualifica</span>
+    </div>
+    <div class="fl"><input class="fi" id="f_grado" style="width:120px;text-align:right" type="text"><span class="fl-lbl">Grado</span></div>
   </div>
 </div>
 
 <div class="st">Virtutes</div>
 <div class="vgrid">
-  <div class="vbox"><div class="vname">Coordinatio<span class="vsub">Coordinazione</span></div><input class="vval" id="v_coord" type="text" maxlength="2"></div>
-  <div class="vbox"><div class="vname">Auctoritas<span class="vsub">Autorità</span></div><input class="vval" id="v_auct" type="text" maxlength="2"></div>
-  <div class="vbox"><div class="vname">Ratio<span class="vsub">Razionalità</span></div><input class="vval" id="v_ratio" type="text" maxlength="2"></div>
-  <div class="vbox"><div class="vname">Vigor<span class="vsub">Vigore</span></div><input class="vval" id="v_vigor" type="text" maxlength="2"></div>
-  <div class="vbox"><div class="vname">Ingenium<span class="vsub">Ingegno</span></div><input class="vval" id="v_ingen" type="text" maxlength="2"></div>
-  <div class="vbox"><div class="vname">Sensibilitas<span class="vsub">Sensibilità</span></div><input class="vval" id="v_sens" type="text" maxlength="2"></div>
+  <div class="vbox"><div class="vname">Coordinatio<span class="vsub">Coordinazione</span></div><input class="vval" id="v_coord" type="text" maxlength="2" oninput="calcStats();autoSave()"></div>
+  <div class="vbox"><div class="vname">Auctoritas<span class="vsub">Autorità</span></div><input class="vval" id="v_auct" type="text" maxlength="2" oninput="autoSave()"></div>
+  <div class="vbox"><div class="vname">Ratio<span class="vsub">Razionalità</span></div><input class="vval" id="v_ratio" type="text" maxlength="2" oninput="calcStats();autoSave()"></div>
+  <div class="vbox"><div class="vname">Vigor<span class="vsub">Vigore</span></div><input class="vval" id="v_vigor" type="text" maxlength="2" oninput="calcStats();autoSave()"></div>
+  <div class="vbox"><div class="vname">Ingenium<span class="vsub">Ingegno</span></div><input class="vval" id="v_ingen" type="text" maxlength="2" oninput="autoSave()"></div>
+  <div class="vbox"><div class="vname">Sensibilitas<span class="vsub">Sensibilità</span></div><input class="vval" id="v_sens" type="text" maxlength="2" oninput="calcStats();autoSave()"></div>
 </div>
 <div class="dv"></div>
 
@@ -226,20 +343,34 @@ select.esel:focus{border-color:var(--red)}
 <div class="pgrid" id="peritiae"></div>
 <div class="dv"></div>
 
+<!-- BOTTOM ROW -->
 <div class="brow">
+  <!-- PIETAS -->
   <div class="piet">
     <div class="piet-lbl">Pietas</div>
-    <input class="piet-v" id="f_pietas" type="text" maxlength="2">
-    <div class="piet-ml">Massimo</div>
-    <input class="piet-m" id="f_pietas_max" type="text" maxlength="2">
+    <div class="piet-top">
+      <input class="piet-v" id="f_pietas" type="text" maxlength="2" title="Pietas corrente">
+      <div class="piet-maxbox">
+        <div class="piet-maxlbl">Massimo</div>
+        <input class="piet-max" id="f_pietas_max" type="text" maxlength="2" title="Pietas massima">
+      </div>
+    </div>
+    <div class="calc-hint" id="pietas-hint"></div>
+    <div class="pb-grid" id="pietasBubbles"></div>
   </div>
+
+  <!-- PUNTI VITA -->
   <div class="pv-blk">
     <div class="pv-hdr">
       <div class="pv-lbl">Punti Vita</div>
+      <span class="pv-max-lbl" id="pvMaxLbl"></span>
       <div class="pv-cura"><input type="checkbox" id="f_cura"><label for="f_cura">Cura</label></div>
     </div>
+    <div class="calc-hint" id="pv-hint"></div>
     <div class="pv-bubbles" id="pvBubbles"></div>
   </div>
+
+  <!-- MOLTIPLICATORI -->
   <div class="molt-blk">
     <div class="molt-lbl">Moltiplicatori</div>
     <div class="mgrid" id="moltGrid"></div>
@@ -247,6 +378,7 @@ select.esel:focus{border-color:var(--red)}
 </div>
 <div class="dv"></div>
 
+<!-- LAST ROW -->
 <div class="lrow">
   <div class="dblk">
     <div class="dlbl">Nume Tutelare</div>
@@ -259,28 +391,25 @@ select.esel:focus{border-color:var(--red)}
     <div class="irow"><div class="idot"></div><input class="iinp" id="f_inv2" type="text" placeholder="Indigitamentum…"></div>
     <div class="irow"><div class="idot"></div><input class="iinp" id="f_inv3" type="text" placeholder="Indigitamentum…"></div>
   </div>
-  <div class="eagle">
-    <div class="e-ln"></div><div class="e-txt">🦅</div><div class="e-ln"></div>
-  </div>
+  <div class="eagle"><div class="e-ln"></div><div class="e-txt">🦅</div><div class="e-ln"></div></div>
   <div class="ceblk">
     <div class="celbl">Equipaggiamento da Guerra</div>
-    <div class="erow"><span class="etype">Arma I</span><select class="esel" id="w1" onchange="fw(1)"><option value="">— Scegli —</option><optgroup label="Ravvicinate"></optgroup><optgroup label="A distanza"></optgroup></select><div class="estat"><span class="eslbl">Dan</span><input class="esval" id="w1d" type="text" readonly></div><div class="estat"><span class="eslbl">Ing</span><input class="esval" id="w1i" type="text" readonly></div><div class="expbox"><input type="checkbox" id="w1e"><span>Exp.</span></div></div>
+    <div class="erow"><span class="etype">Arma I</span><select class="esel" id="w1" onchange="fw(1)"><option value="">— Scegli —</option><optgroup label="Ravvicinate"></optgroup><optgroup label="A distanza"></optgroup><optgroup label="Personalizzate"></optgroup></select><div class="estat"><span class="eslbl">Dan</span><input class="esval" id="w1d" type="text" readonly></div><div class="estat"><span class="eslbl">Ing</span><input class="esval" id="w1i" type="text" readonly></div><div class="expbox"><input type="checkbox" id="w1e"><span>Exp.</span></div></div>
     <div class="ecar" id="w1c"></div>
-    <div class="erow"><span class="etype">Arma II</span><select class="esel" id="w2" onchange="fw(2)"><option value="">— Scegli —</option><optgroup label="Ravvicinate"></optgroup><optgroup label="A distanza"></optgroup></select><div class="estat"><span class="eslbl">Dan</span><input class="esval" id="w2d" type="text" readonly></div><div class="estat"><span class="eslbl">Ing</span><input class="esval" id="w2i" type="text" readonly></div><div class="expbox"><input type="checkbox" id="w2e"><span>Exp.</span></div></div>
+    <div class="erow"><span class="etype">Arma II</span><select class="esel" id="w2" onchange="fw(2)"><option value="">— Scegli —</option><optgroup label="Ravvicinate"></optgroup><optgroup label="A distanza"></optgroup><optgroup label="Personalizzate"></optgroup></select><div class="estat"><span class="eslbl">Dan</span><input class="esval" id="w2d" type="text" readonly></div><div class="estat"><span class="eslbl">Ing</span><input class="esval" id="w2i" type="text" readonly></div><div class="expbox"><input type="checkbox" id="w2e"><span>Exp.</span></div></div>
     <div class="ecar" id="w2c"></div>
-    <div class="erow"><span class="etype">Arma III</span><select class="esel" id="w3" onchange="fw(3)"><option value="">— Scegli —</option><optgroup label="Ravvicinate"></optgroup><optgroup label="A distanza"></optgroup></select><div class="estat"><span class="eslbl">Dan</span><input class="esval" id="w3d" type="text" readonly></div><div class="estat"><span class="eslbl">Ing</span><input class="esval" id="w3i" type="text" readonly></div><div class="expbox"><input type="checkbox" id="w3e"><span>Exp.</span></div></div>
+    <div class="erow"><span class="etype">Arma III</span><select class="esel" id="w3" onchange="fw(3)"><option value="">— Scegli —</option><optgroup label="Ravvicinate"></optgroup><optgroup label="A distanza"></optgroup><optgroup label="Personalizzate"></optgroup></select><div class="estat"><span class="eslbl">Dan</span><input class="esval" id="w3d" type="text" readonly></div><div class="estat"><span class="eslbl">Ing</span><input class="esval" id="w3i" type="text" readonly></div><div class="expbox"><input type="checkbox" id="w3e"><span>Exp.</span></div></div>
     <div class="ecar" id="w3c"></div>
     <div class="erow"><span class="etype">Scudo</span><select class="esel" id="sh" onchange="fsh()"><option value="">— Scegli —</option><option value="0">Parma (piccolo)</option><option value="1">Clipeus (medio)</option><option value="2">Scutum (grande)</option></select><div class="estat"><span class="eslbl">Par</span><input class="esval" id="shp" type="text" readonly></div><div class="estat"><span class="eslbl">Ing</span><input class="esval" id="shi" type="text" readonly></div></div>
     <div class="erow"><span class="etype">Armatura</span><select class="esel" id="ar" onchange="far()"><option value="">— Scegli —</option><option value="0">Corium Lorica (cuoio)</option><option value="1">Lorica Squamata (scaglie leggera)</option><option value="2">Lorica Hamata (cotta di maglia)</option><option value="3">Lorica Plumata (scaglie pesante)</option><option value="4">Lorica Segmentata (lamine metallo)</option><option value="5">Lorica Musculata (corazza toracica)</option></select><div class="estat"><span class="eslbl">Prot</span><input class="esval" id="arp" type="text" readonly></div><div class="estat"><span class="eslbl">Ing</span><input class="esval" id="ari" type="text" readonly></div></div>
     <div class="etot"><span class="etlbl">Ingombro Totale</span><input class="etval" id="itot" type="text" readonly></div>
   </div>
 </div>
-
-</div></div>
+</div></div></div>
 
 <!-- ══════════ RETRO ══════════ -->
 <div class="page-label">✦ Retro ✦</div>
-<div class="sheet">
+<div class="sheet-outer" id="so2"><div class="sheet">
   <div class="corner corner-tl"><svg viewBox="0 0 30 30" fill="none"><path d="M2 28L2 2L28 2" stroke="#8B6820" stroke-width="2"/><path d="M6 24L6 6L24 6" stroke="#C4A850" stroke-width="1"/><circle cx="6" cy="6" r="2" fill="#8B6820"/></svg></div>
   <div class="corner corner-tr"><svg viewBox="0 0 30 30" fill="none"><path d="M2 28L2 2L28 2" stroke="#8B6820" stroke-width="2"/><path d="M6 24L6 6L24 6" stroke="#C4A850" stroke-width="1"/><circle cx="6" cy="6" r="2" fill="#8B6820"/></svg></div>
   <div class="corner corner-bl"><svg viewBox="0 0 30 30" fill="none"><path d="M2 28L2 2L28 2" stroke="#8B6820" stroke-width="2"/><path d="M6 24L6 6L24 6" stroke="#C4A850" stroke-width="1"/><circle cx="6" cy="6" r="2" fill="#8B6820"/></svg></div>
@@ -330,27 +459,19 @@ select.esel:focus{border-color:var(--red)}
     <div class="bt">Note</div>
     <textarea class="bta" id="f_note" rows="6" placeholder="Annotazioni, storia, legami, obiettivi, segreti…"></textarea>
   </div>
-</div></div>
+</div></div></div>
 
 </div><!-- /page-wrap -->
 
 <script>
-/* ══════════════════════════════════════════════════════
-   DATA
-══════════════════════════════════════════════════════ */
-const PERITIAE_DATA = [
-  {id:'bello',   name:'De Bello',    sub:'Combattimento',
-   specs:['Archi','Asce e Mazze','Castra','Dardi','Lance','Minacciare','Pugnali','Spade','Tattica']},
-  {id:'corpore', name:'De Corpore',  sub:'Fisico',
-   specs:['Arrampicarsi','Banchettare','Borseggiare','Correre','Furtività','Lotta','Marciare','Nuotare','Saltare']},
-  {id:'magia',   name:'De Magia',    sub:'Magia / Divinazione',
-   specs:['Chiaroveggenza','Culti Imperiali','Culti Proibiti','Favore degli Dèi','Interp. dei Presagi','Interp. dei Sogni','Precognizione','Retrocognizione','Superstizioni']},
-  {id:'natura',  name:'De Natura',   sub:'Natura / Esplorazione',
-   specs:['Cacciare','Cavalcare','Erboristeria','Esplorazione','Navigare','Orientamento','Recuperare Cibo','Sapienza Animale','Tempo Atmosferico']},
-  {id:'scientia',name:'De Scientia', sub:'Conoscenza',
-   specs:['Architettura','Artigianato','Decifrare','Filosofia','Geografia','Indagare','Machinae','Medicina','Storia']},
-  {id:'societate',name:'De Societate',sub:'Sociale / Comando',
-   specs:['Bassifondi','Comandare','Decorum','Ingannare','Intrattenimento','Negoziare','Oratoria','Politica','Seduzione']},
+/* ══ DATA ══ */
+const PERITIAE_DATA=[
+  {id:'bello',   name:'De Bello',    sub:'Combattimento',      specs:['Archi','Asce e Mazze','Castra','Dardi','Lance','Minacciare','Pugnali','Spade','Tattica']},
+  {id:'corpore', name:'De Corpore',  sub:'Fisico',             specs:['Arrampicarsi','Banchettare','Borseggiare','Correre','Furtività','Lotta','Marciare','Nuotare','Saltare']},
+  {id:'magia',   name:'De Magia',    sub:'Magia / Divinazione',specs:['Chiaroveggenza','Culti Imperiali','Culti Proibiti','Favore degli Dèi','Interp. dei Presagi','Interp. dei Sogni','Precognizione','Retrocognizione','Superstizioni']},
+  {id:'natura',  name:'De Natura',   sub:'Natura / Esplorazione',specs:['Cacciare','Cavalcare','Erboristeria','Esplorazione','Navigare','Orientamento','Recuperare Cibo','Sapienza Animale','Tempo Atmosferico']},
+  {id:'scientia',name:'De Scientia', sub:'Conoscenza',         specs:['Architettura','Artigianato','Decifrare','Filosofia','Geografia','Indagare','Machinae','Medicina','Storia']},
+  {id:'societate',name:'De Societate',sub:'Sociale / Comando', specs:['Bassifondi','Comandare','Decorum','Ingannare','Intrattenimento','Negoziare','Oratoria','Politica','Seduzione']},
 ];
 const MELEE=[
   {n:'Pugio (Pugnale)',dan:'3',ing:0,car:''},
@@ -379,69 +500,140 @@ const RANGED=[
 ];
 const SH=[{par:'+1',ing:2},{par:'+2',ing:4},{par:'+3',ing:6}];
 const AR=[{p:3,i:3},{p:4,i:4},{p:5,i:5},{p:6,i:6},{p:8,i:8},{p:10,i:10}];
+const QUAL_MODS={
+  'Guerriero':{pv:3,pietas:-1},
+  'Esploratore':{pv:2,pietas:0},
+  'Diplomatico':{pv:1,pietas:1},
+  'Sapiente':{pv:0,pietas:2},
+  'Augure':{pv:-1,pietas:3},
+};
 const CURR_CATS=['De Bello','De Corpore','De Magia','De Natura','De Scientia','De Societate','Mos Arcanorum','Pax Deorum'];
-const LS_KEY = 'lexarcana_scheda_v1';
+const LS_KEY='lexarcana_scheda_v1';
+const LS_WEAP='lexarcana_armi_v1';
+let customWeapons=[];
 
-/* ══════════════════════════════════════════════════════
-   BUILD PERITIAE
-══════════════════════════════════════════════════════ */
-const pgrid = document.getElementById('peritiae');
-PERITIAE_DATA.forEach(p => {
-  const block = document.createElement('div');
-  block.className = 'pblock';
-  const hdr = document.createElement('div');
-  hdr.className = 'phdr';
-  hdr.innerHTML = `<div class="pname">${p.name}<span class="psub">${p.sub}</span></div><input class="pval" id="p_${p.id}" type="text" maxlength="2">`;
+/* ══ BUILD PERITIAE ══ */
+const pgrid=document.getElementById('peritiae');
+PERITIAE_DATA.forEach(p=>{
+  const block=document.createElement('div');block.className='pblock';
+  const hdr=document.createElement('div');hdr.className='phdr';
+  hdr.innerHTML=`<div class="pname">${p.name}<span class="psub">${p.sub}</span></div><input class="pval" id="p_${p.id}" type="text" maxlength="2">`;
   block.appendChild(hdr);
-  for (let i=0; i<6; i++) {
-    const row = document.createElement('div');
-    row.className = 'srow';
-    const sel = document.createElement('select');
-    sel.className = 'ssel';
-    sel.id = `s_${p.id}_${i}`;
-    sel.innerHTML = `<option value="">— Specializzazione —</option>`;
-    p.specs.forEach(s => { sel.innerHTML += `<option value="${s}">${s}</option>`; });
-    sel.innerHTML += `<option value="__custom__">✎ Personalizzata…</option>`;
-    sel.addEventListener('change', function() {
-      if (this.value === '__custom__') {
-        const name = prompt('Inserisci il nome della specializzazione:');
-        if (name && name.trim()) {
-          const opt = new Option(name.trim(), name.trim());
-          this.insertBefore(opt, this.lastElementChild);
-          this.value = name.trim();
-        } else { this.value = ''; }
+  for(let i=0;i<6;i++){
+    const row=document.createElement('div');row.className='srow';
+    const sel=document.createElement('select');sel.className='ssel';sel.id=`s_${p.id}_${i}`;
+    sel.innerHTML=`<option value="">— Specializzazione —</option>`;
+    p.specs.forEach(s=>{sel.innerHTML+=`<option value="${s}">${s}</option>`;});
+    sel.innerHTML+=`<option value="__custom__">✎ Personalizzata…</option>`;
+    sel.addEventListener('change',function(){
+      if(this.value==='__custom__'){
+        const name=prompt('Inserisci il nome della specializzazione:');
+        if(name&&name.trim()){
+          const opt=new Option(name.trim(),name.trim());
+          this.insertBefore(opt,this.lastElementChild);this.value=name.trim();
+        }else this.value='';
       }
       autoSave();
     });
-    const bonus = document.createElement('input');
-    bonus.className = 'sb-inp';
-    bonus.type = 'text';
-    bonus.maxLength = 2;
-    bonus.id = `b_${p.id}_${i}`;
-    bonus.placeholder = '+';
-    bonus.addEventListener('input', autoSave);
-    row.appendChild(sel); row.appendChild(bonus);
-    block.appendChild(row);
+    const bonus=document.createElement('input');bonus.className='sb-inp';bonus.type='text';bonus.maxLength=2;bonus.id=`b_${p.id}_${i}`;bonus.placeholder='+';bonus.addEventListener('input',autoSave);
+    row.appendChild(sel);row.appendChild(bonus);block.appendChild(row);
   }
   pgrid.appendChild(block);
 });
 
-/* ══════════════════════════════════════════════════════
-   BUILD WEAPON SELECTS
-══════════════════════════════════════════════════════ */
-[1,2,3].forEach(n => {
-  const sel = document.getElementById('w'+n);
-  const g1 = sel.querySelectorAll('optgroup')[0];
-  const g2 = sel.querySelectorAll('optgroup')[1];
-  MELEE.forEach((w,i) => g1.appendChild(new Option(w.n,'m'+i)));
-  RANGED.forEach((w,i) => g2.appendChild(new Option(w.n,'r'+i)));
+/* ══ PUNTI VITA BUBBLES ══ */
+const pvG=document.getElementById('pvBubbles');
+for(let i=40;i>=1;i--){
+  const b=document.createElement('div');b.className='pvb';b.textContent=i;b.dataset.n=i;b.id='pvb_'+i;
+  b.onclick=()=>{
+    const n=+b.dataset.n,m=b.classList.contains('marked');
+    pvG.querySelectorAll('.pvb').forEach(x=>{const xn=+x.dataset.n;if(!m&&xn<=n)x.classList.add('marked');if(m&&xn<=n)x.classList.remove('marked');});
+    autoSave();
+  };
+  pvG.appendChild(b);
+}
+
+/* ══ PIETAS BUBBLES ══ */
+const piG=document.getElementById('pietasBubbles');
+for(let i=40;i>=1;i--){
+  const b=document.createElement('div');b.className='pb';b.textContent=i;b.dataset.n=i;b.id='pb_'+i;
+  b.onclick=()=>{b.classList.toggle('spent');autoSave();};
+  piG.appendChild(b);
+}
+
+/* ══ MOLTIPLICATORI ══ */
+const mG=document.getElementById('moltGrid');
+[[1,2,3,'×1'],[4,5,6,'×2'],[7,8,9,'×3'],[10,11,12,'×4'],[13,14,15,'×5'],['16+','','','×6']].forEach((row,ri)=>{
+  row.forEach((v,ci)=>{
+    const c=document.createElement('div');c.className='mc';c.textContent=v;c.id=`mc_${ri}_${ci}`;
+    if(ci===3)c.classList.add('ml');
+    else if(v!=='')c.onclick=()=>{c.classList.toggle('active');autoSave();};
+    mG.appendChild(c);
+  });
 });
 
-function fw(n) {
+/* ══ CURRICULUM ══ */
+const tb=document.getElementById('currBody');
+CURR_CATS.forEach((cat,i)=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><span class="ccat${i>=6?' sp':''}">${cat}</span></td><td><div class="cmcell"><span class="cesp">Esp.</span><span class="cx">×</span><input class="cmi" id="cm_${i}" type="text" maxlength="2" placeholder="–"></div></td><td><input class="cpi" id="cp_${i}" type="text" maxlength="6" placeholder="—"></td>`;
+  tb.appendChild(tr);
+});
+
+/* ══ AUTO-CALC PV & PIETAS ══ */
+function calcStats(){
+  const vigor =parseInt(document.getElementById('v_vigor').value)||0;
+  const coord =parseInt(document.getElementById('v_coord').value)||0;
+  const ratio =parseInt(document.getElementById('v_ratio').value)||0;
+  const sens  =parseInt(document.getElementById('v_sens').value)||0;
+  const qual  =document.getElementById('f_qualifica').value;
+  const mod   =QUAL_MODS[qual]||{pv:0,pietas:0};
+  if(vigor||coord||qual){
+    const pvMax=vigor+coord+mod.pv;
+    document.getElementById('f_pv_max_display')||0;
+    document.getElementById('pvMaxLbl').textContent=pvMax>0?`max: ${pvMax}`:'';
+    document.querySelectorAll('.pvb').forEach(b=>b.classList.toggle('above-max',+b.dataset.n>pvMax));
+    const pvHint=qual?`${vigor} + ${coord} ${mod.pv>=0?'+':''}${mod.pv} (${qual}) = ${pvMax}`:'';
+    document.getElementById('pv-hint').textContent=pvHint;
+  }
+  if(ratio||sens||qual){
+    const pietasMax=ratio+sens+(mod.pietas||0);
+    if(pietasMax>0){
+      document.getElementById('f_pietas_max').value=pietasMax;
+      document.querySelectorAll('.pb').forEach(b=>b.classList.toggle('above-max',+b.dataset.n>pietasMax));
+    }
+    const piHint=qual?`${ratio} + ${sens} ${mod.pietas>=0?'+':''}${mod.pietas} (${qual}) = ${ratio+sens+mod.pietas}`:'';
+    document.getElementById('pietas-hint').textContent=piHint;
+  }
+}
+
+/* ══ WEAPON SELECTS ══ */
+function rebuildWeaponDropdowns(){
+  [1,2,3].forEach(n=>{
+    const sel=document.getElementById('w'+n);
+    const saved=sel.value;
+    const gs=sel.querySelectorAll('optgroup');
+    gs[0].innerHTML='';gs[1].innerHTML='';gs[2].innerHTML='';
+    MELEE.forEach((w,i)=>gs[0].appendChild(new Option(w.n,'m'+i)));
+    RANGED.forEach((w,i)=>gs[1].appendChild(new Option(w.n,'r'+i)));
+    customWeapons.forEach((w,i)=>gs[2].appendChild(new Option(w.n,'c'+i)));
+    sel.value=saved;
+  });
+}
+
+function getWeapon(v){
+  if(!v)return null;
+  const t=v[0],i=+v.slice(1);
+  if(t==='m')return MELEE[i];
+  if(t==='r')return RANGED[i];
+  if(t==='c')return customWeapons[i]?{n:customWeapons[i].n,dan:customWeapons[i].dan,ing:customWeapons[i].ing,car:customWeapons[i].car}:null;
+  return null;
+}
+function fw(n){
   const v=document.getElementById('w'+n).value;
   const dd=document.getElementById('w'+n+'d'),di=document.getElementById('w'+n+'i'),dc=document.getElementById('w'+n+'c');
   if(!v){dd.value='';di.value='';dc.textContent='';upd();autoSave();return;}
-  const w=v[0]==='m'?MELEE[+v.slice(1)]:RANGED[+v.slice(1)];
+  const w=getWeapon(v);if(!w)return;
   dd.value=w.dan;di.value=w.ing;dc.textContent=w.car||'';upd();autoSave();
 }
 function fsh(){
@@ -455,292 +647,245 @@ function far(){
   const a=AR[+v];document.getElementById('arp').value=a.p;document.getElementById('ari').value=a.i;upd();autoSave();
 }
 function upd(){
-  let t=0;
-  ['w1i','w2i','w3i','shi','ari'].forEach(id=>{t+=parseInt(document.getElementById(id).value)||0});
+  let t=0;['w1i','w2i','w3i','shi','ari'].forEach(id=>{t+=parseInt(document.getElementById(id).value)||0});
   document.getElementById('itot').value=t||'';
 }
 
-/* ══════════════════════════════════════════════════════
-   PUNTI VITA
-══════════════════════════════════════════════════════ */
-const pvG = document.getElementById('pvBubbles');
-for(let i=40;i>=1;i--){
-  const b=document.createElement('div');
-  b.className='pvb';b.textContent=i;b.dataset.n=i;b.id='pvb_'+i;
-  b.onclick=()=>{
-    const n=+b.dataset.n,m=b.classList.contains('marked');
-    pvG.querySelectorAll('.pvb').forEach(x=>{
-      const xn=+x.dataset.n;
-      if(!m&&xn<=n)x.classList.add('marked');
-      if(m&&xn<=n)x.classList.remove('marked');
-    });
-    autoSave();
-  };
-  pvG.appendChild(b);
-}
-
-/* ══════════════════════════════════════════════════════
-   MOLTIPLICATORI
-══════════════════════════════════════════════════════ */
-const mG=document.getElementById('moltGrid');
-[[1,2,3,'×1'],[4,5,6,'×2'],[7,8,9,'×3'],[10,11,12,'×4'],[13,14,15,'×5'],['16+','','','×6']].forEach((row,ri)=>{
-  row.forEach((v,ci)=>{
-    const c=document.createElement('div');c.className='mc';c.textContent=v;
-    c.id=`mc_${ri}_${ci}`;
-    if(ci===3)c.classList.add('ml');
-    else if(v!=='')c.onclick=()=>{c.classList.toggle('active');autoSave();};
-    mG.appendChild(c);
-  });
+/* ══ CUSTOM WEAPONS MODAL ══ */
+document.getElementById('mw-tipo').addEventListener('change',function(){
+  document.getElementById('mw-git-row').style.display=this.value==='ranged'?'block':'none';
 });
 
-/* ══════════════════════════════════════════════════════
-   CURRICULUM
-══════════════════════════════════════════════════════ */
-const tb=document.getElementById('currBody');
-CURR_CATS.forEach((cat,i)=>{
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td><span class="ccat${i>=6?' sp':''}">${cat}</span></td><td><div class="cmcell"><span class="cesp">Esp.</span><span class="cx">×</span><input class="cmi" id="cm_${i}" type="text" maxlength="2" placeholder="–"></div></td><td><input class="cpi" id="cp_${i}" type="text" maxlength="6" placeholder="—"></td>`;
-  tb.appendChild(tr);
-});
+function openArmiModal(){
+  renderWeaponsList();
+  document.getElementById('armiModal').classList.remove('hidden');
+}
+function closeArmiModal(){document.getElementById('armiModal').classList.add('hidden');}
 
-/* ══════════════════════════════════════════════════════
-   AUTO-SAVE WIRING — attach to all plain inputs/selects/textareas
-══════════════════════════════════════════════════════ */
-function wireAutoSave(){
-  document.querySelectorAll('input:not([type=checkbox]):not([type=file]), select, textarea').forEach(el=>{
-    el.addEventListener('change', autoSave);
-    el.addEventListener('input', autoSave);
-  });
-  document.querySelectorAll('input[type=checkbox]').forEach(el=>{
-    el.addEventListener('change', autoSave);
+function addCustomWeapon(){
+  const nome=document.getElementById('mw-nome').value.trim();
+  const tipo=document.getElementById('mw-tipo').value;
+  const dan =document.getElementById('mw-dan').value.trim();
+  const ing =parseInt(document.getElementById('mw-ing').value)||0;
+  const car =document.getElementById('mw-car').value.trim();
+  const git =document.getElementById('mw-git').value;
+  if(!nome||!dan){alert('Inserisci almeno nome e danno.');return;}
+  const carFull=[car,tipo==='ranged'?`Gittata ${git}`:''].filter(Boolean).join(', ');
+  customWeapons.push({n:nome,dan,ing,car:carFull,tipo});
+  saveCustomWeapons();
+  rebuildWeaponDropdowns();
+  renderWeaponsList();
+  document.getElementById('mw-nome').value='';
+  document.getElementById('mw-dan').value='';
+  document.getElementById('mw-ing').value='';
+  document.getElementById('mw-car').value='';
+  showStatus('Arma aggiunta ✓');
+}
+
+function deleteCustomWeapon(i){
+  if(!confirm(`Eliminare "${customWeapons[i].n}"?`))return;
+  customWeapons.splice(i,1);
+  saveCustomWeapons();
+  rebuildWeaponDropdowns();
+  renderWeaponsList();
+}
+
+function renderWeaponsList(){
+  const list=document.getElementById('mw-list');
+  if(!customWeapons.length){list.innerHTML='<div class="modal-empty">Nessuna arma personalizzata ancora.</div>';return;}
+  list.innerHTML='';
+  customWeapons.forEach((w,i)=>{
+    const item=document.createElement('div');item.className='modal-item';
+    item.innerHTML=`<span class="modal-item-name">${w.n}</span><span class="modal-item-stats">Dan:${w.dan} Ing:${w.ing}${w.car?' · '+w.car:''}</span><button class="modal-del" onclick="deleteCustomWeapon(${i})">✕</button>`;
+    list.appendChild(item);
   });
 }
 
-/* ══════════════════════════════════════════════════════
-   COLLECT ALL DATA → plain object
-══════════════════════════════════════════════════════ */
-function collectData(){
-  const d={};
-  // Plain id fields
-  ['nome','provincia','linguaggi','eta','sesso','qualifica','grado',
-   'pietas','pietas_max','cura','nume','abilita','inv0','inv1','inv2','inv3',
-   'note'].forEach(k=>{
-    const el=document.getElementById('f_'+k);
-    if(!el)return;
-    d['f_'+k]=el.type==='checkbox'?el.checked:el.value;
-  });
-  // Virtutes
-  ['coord','auct','ratio','vigor','ingen','sens'].forEach(k=>{
-    d['v_'+k]=document.getElementById('v_'+k).value;
-  });
-  // Peritiae values
-  PERITIAE_DATA.forEach(p=>{
-    d['p_'+p.id]=document.getElementById('p_'+p.id).value;
-    for(let i=0;i<6;i++){
-      d[`s_${p.id}_${i}`]=document.getElementById(`s_${p.id}_${i}`).value;
-      d[`b_${p.id}_${i}`]=document.getElementById(`b_${p.id}_${i}`).value;
-    }
-  });
-  // PV bubbles
-  const pvMarked=[];
-  pvG.querySelectorAll('.pvb.marked').forEach(b=>pvMarked.push(+b.dataset.n));
-  d.pvMarked=pvMarked;
-  // Moltiplicatori
-  const mActive=[];
-  mG.querySelectorAll('.mc.active').forEach(c=>mActive.push(c.id));
-  d.mActive=mActive;
-  // Weapons
-  ['w1','w2','w3','sh','ar'].forEach(k=>{
-    const el=document.getElementById(k);
-    if(el)d['sel_'+k]=el.value;
-  });
-  ['w1e','w2e','w3e'].forEach(k=>{
-    const el=document.getElementById(k);
-    if(el)d['chk_'+k]=el.checked;
-  });
-  // Curriculum
-  CURR_CATS.forEach((_,i)=>{
-    d['cm_'+i]=document.getElementById('cm_'+i).value;
-    d['cp_'+i]=document.getElementById('cp_'+i).value;
-  });
-  // Benefici
-  for(let i=0;i<6;i++){d['ben'+i]=document.getElementById('ben'+i).value;}
-  // Indigitamenta
-  for(let i=0;i<6;i++){d['ind'+i]=document.getElementById('ind'+i).value;}
-  // Equipaggiamento ordinario
-  for(let i=0;i<8;i++){d['eq'+i]=document.getElementById('eq'+i).value;}
-  return d;
+function saveCustomWeapons(){
+  try{localStorage.setItem(LS_WEAP,JSON.stringify(customWeapons));}catch(e){}
+}
+function loadCustomWeapons(){
+  try{const r=localStorage.getItem(LS_WEAP);if(r)customWeapons=JSON.parse(r);}catch(e){customWeapons=[];}
 }
 
-/* ══════════════════════════════════════════════════════
-   RESTORE DATA from plain object
-══════════════════════════════════════════════════════ */
-function restoreData(d){
-  if(!d)return;
-  // Plain fields
-  ['nome','provincia','linguaggi','eta','sesso','qualifica','grado',
-   'pietas','pietas_max','cura','nume','abilita','inv0','inv1','inv2','inv3',
-   'note'].forEach(k=>{
-    const el=document.getElementById('f_'+k);
-    if(!el)return;
-    if(el.type==='checkbox')el.checked=!!d['f_'+k];
-    else el.value=d['f_'+k]||'';
-  });
-  // Virtutes
-  ['coord','auct','ratio','vigor','ingen','sens'].forEach(k=>{
-    const el=document.getElementById('v_'+k);
-    if(el)el.value=d['v_'+k]||'';
-  });
-  // Peritiae
-  PERITIAE_DATA.forEach(p=>{
-    const pv=document.getElementById('p_'+p.id);
-    if(pv)pv.value=d['p_'+p.id]||'';
-    for(let i=0;i<6;i++){
-      const sel=document.getElementById(`s_${p.id}_${i}`);
-      const bon=document.getElementById(`b_${p.id}_${i}`);
-      const sv=d[`s_${p.id}_${i}`]||'';
-      // If it's a custom value not in list, add it
-      if(sv && sv!=='__custom__'){
-        let found=false;
-        for(const opt of sel.options){if(opt.value===sv){found=true;break;}}
-        if(!found){
-          const opt=new Option(sv,sv);
-          sel.insertBefore(opt,sel.lastElementChild);
-        }
-      }
-      sel.value=sv;
-      if(bon)bon.value=d[`b_${p.id}_${i}`]||'';
-    }
-  });
-  // PV bubbles
-  pvG.querySelectorAll('.pvb').forEach(b=>b.classList.remove('marked'));
-  (d.pvMarked||[]).forEach(n=>{
-    const b=document.getElementById('pvb_'+n);
-    if(b)b.classList.add('marked');
-  });
-  // Moltiplicatori
-  mG.querySelectorAll('.mc').forEach(c=>c.classList.remove('active'));
-  (d.mActive||[]).forEach(id=>{
-    const c=document.getElementById(id);
-    if(c)c.classList.add('active');
-  });
-  // Weapons
-  ['w1','w2','w3','sh','ar'].forEach(k=>{
-    const el=document.getElementById(k);
-    if(el&&d['sel_'+k]!==undefined){el.value=d['sel_'+k];}
-  });
-  fw(1);fw(2);fw(3);fsh();far();
-  ['w1e','w2e','w3e'].forEach(k=>{
-    const el=document.getElementById(k);
-    if(el)el.checked=!!d['chk_'+k];
-  });
-  // Curriculum
-  CURR_CATS.forEach((_,i)=>{
-    const cm=document.getElementById('cm_'+i),cp=document.getElementById('cp_'+i);
-    if(cm)cm.value=d['cm_'+i]||'';
-    if(cp)cp.value=d['cp_'+i]||'';
-  });
-  // Benefici / Indigitamenta / Equipaggiamento
-  for(let i=0;i<6;i++){
-    const b=document.getElementById('ben'+i),ind=document.getElementById('ind'+i);
-    if(b)b.value=d['ben'+i]||'';
-    if(ind)ind.value=d['ind'+i]||'';
-  }
-  for(let i=0;i<8;i++){
-    const eq=document.getElementById('eq'+i);
-    if(eq)eq.value=d['eq'+i]||'';
-  }
+function exportWeapons(){
+  const nome=document.getElementById('f_nome').value.trim()||'gruppo';
+  const blob=new Blob([JSON.stringify(customWeapons,null,2)],{type:'application/json'});
+  shareOrDownload(blob,`lex_arcana_armi_${nome}.json`,'Lista armi esportata ✓');
 }
-
-/* ══════════════════════════════════════════════════════
-   LOCALSTORAGE SAVE / LOAD
-══════════════════════════════════════════════════════ */
-let saveTimer=null;
-function autoSave(){
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(()=>{
-    try{
-      localStorage.setItem(LS_KEY, JSON.stringify(collectData()));
-      showStatus('Salvato automaticamente ✓');
-    }catch(e){showStatus('⚠ Salvataggio fallito');}
-  }, 800);
-}
-
-function manualSave(){
-  try{
-    localStorage.setItem(LS_KEY, JSON.stringify(collectData()));
-    showStatus('Salvato ✓');
-  }catch(e){alert('Errore nel salvataggio locale.');}
-}
-
-function loadFromStorage(){
-  try{
-    const raw=localStorage.getItem(LS_KEY);
-    if(raw)restoreData(JSON.parse(raw));
-  }catch(e){console.warn('Nessun dato salvato.');}
-}
-
-/* ══════════════════════════════════════════════════════
-   EXPORT / IMPORT JSON
-══════════════════════════════════════════════════════ */
-function exportJSON(){
-  const data=collectData();
-  const nome=document.getElementById('f_nome').value.trim()||'custos';
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=`lex_arcana_${nome.replace(/\s+/g,'_')}.json`;
-  a.click();URL.revokeObjectURL(url);
-  showStatus('File JSON esportato ✓');
-}
-
-function importJSON(event){
-  const file=event.target.files[0];
-  if(!file)return;
+function importWeapons(event){
+  const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=e=>{
     try{
       const data=JSON.parse(e.target.result);
-      restoreData(data);
-      localStorage.setItem(LS_KEY,JSON.stringify(data));
-      showStatus('Scheda importata ✓');
-    }catch(err){alert('File JSON non valido o corrotto.');}
+      if(!Array.isArray(data))throw new Error();
+      let added=0;
+      data.forEach(w=>{
+        if(!customWeapons.find(x=>x.n===w.n)){customWeapons.push(w);added++;}
+      });
+      saveCustomWeapons();rebuildWeaponDropdowns();renderWeaponsList();
+      showStatus(`${added} armi importate ✓`);
+    }catch(e){alert('File non valido.');}
   };
-  reader.readAsText(file);
-  event.target.value='';
+  reader.readAsText(file);event.target.value='';
 }
 
-/* ══════════════════════════════════════════════════════
-   RESET
-══════════════════════════════════════════════════════ */
+/* ══ COLLECT DATA ══ */
+function collectData(){
+  const d={};
+  ['nome','provincia','linguaggi','eta','sesso','grado','pietas','pietas_max','cura','nume','abilita','inv0','inv1','inv2','inv3','note'].forEach(k=>{
+    const el=document.getElementById('f_'+k);if(!el)return;
+    d['f_'+k]=el.type==='checkbox'?el.checked:el.value;
+  });
+  d['f_qualifica']=document.getElementById('f_qualifica').value;
+  ['coord','auct','ratio','vigor','ingen','sens'].forEach(k=>{d['v_'+k]=document.getElementById('v_'+k).value;});
+  PERITIAE_DATA.forEach(p=>{
+    d['p_'+p.id]=document.getElementById('p_'+p.id).value;
+    for(let i=0;i<6;i++){d[`s_${p.id}_${i}`]=document.getElementById(`s_${p.id}_${i}`).value;d[`b_${p.id}_${i}`]=document.getElementById(`b_${p.id}_${i}`).value;}
+  });
+  const pvM=[];pvG.querySelectorAll('.pvb.marked').forEach(b=>pvM.push(+b.dataset.n));d.pvMarked=pvM;
+  const piS=[];piG.querySelectorAll('.pb.spent').forEach(b=>piS.push(+b.dataset.n));d.piSpent=piS;
+  const mA=[];mG.querySelectorAll('.mc.active').forEach(c=>mA.push(c.id));d.mActive=mA;
+  ['w1','w2','w3','sh','ar'].forEach(k=>{const el=document.getElementById(k);if(el)d['sel_'+k]=el.value;});
+  ['w1e','w2e','w3e'].forEach(k=>{const el=document.getElementById(k);if(el)d['chk_'+k]=el.checked;});
+  CURR_CATS.forEach((_,i)=>{d['cm_'+i]=document.getElementById('cm_'+i).value;d['cp_'+i]=document.getElementById('cp_'+i).value;});
+  for(let i=0;i<6;i++){d['ben'+i]=document.getElementById('ben'+i).value;d['ind'+i]=document.getElementById('ind'+i).value;}
+  for(let i=0;i<8;i++){d['eq'+i]=document.getElementById('eq'+i).value;}
+  return d;
+}
+
+/* ══ RESTORE DATA ══ */
+function restoreData(d){
+  if(!d)return;
+  ['nome','provincia','linguaggi','eta','sesso','grado','pietas','pietas_max','cura','nume','abilita','inv0','inv1','inv2','inv3','note'].forEach(k=>{
+    const el=document.getElementById('f_'+k);if(!el)return;
+    if(el.type==='checkbox')el.checked=!!d['f_'+k];else el.value=d['f_'+k]||'';
+  });
+  const qel=document.getElementById('f_qualifica');
+  if(qel)qel.value=d['f_qualifica']||'';
+  ['coord','auct','ratio','vigor','ingen','sens'].forEach(k=>{const el=document.getElementById('v_'+k);if(el)el.value=d['v_'+k]||'';});
+  PERITIAE_DATA.forEach(p=>{
+    const pv=document.getElementById('p_'+p.id);if(pv)pv.value=d['p_'+p.id]||'';
+    for(let i=0;i<6;i++){
+      const sel=document.getElementById(`s_${p.id}_${i}`);
+      const sv=d[`s_${p.id}_${i}`]||'';
+      if(sv&&sv!=='__custom__'){let f=false;for(const o of sel.options)if(o.value===sv){f=true;break;}if(!f){const o=new Option(sv,sv);sel.insertBefore(o,sel.lastElementChild);}}
+      sel.value=sv;
+      const bon=document.getElementById(`b_${p.id}_${i}`);if(bon)bon.value=d[`b_${p.id}_${i}`]||'';
+    }
+  });
+  pvG.querySelectorAll('.pvb').forEach(b=>b.classList.remove('marked'));
+  (d.pvMarked||[]).forEach(n=>{const b=document.getElementById('pvb_'+n);if(b)b.classList.add('marked');});
+  piG.querySelectorAll('.pb').forEach(b=>b.classList.remove('spent'));
+  (d.piSpent||[]).forEach(n=>{const b=document.getElementById('pb_'+n);if(b)b.classList.add('spent');});
+  mG.querySelectorAll('.mc').forEach(c=>c.classList.remove('active'));
+  (d.mActive||[]).forEach(id=>{const c=document.getElementById(id);if(c)c.classList.add('active');});
+  ['w1','w2','w3','sh','ar'].forEach(k=>{const el=document.getElementById(k);if(el&&d['sel_'+k]!==undefined)el.value=d['sel_'+k];});
+  fw(1);fw(2);fw(3);fsh();far();
+  ['w1e','w2e','w3e'].forEach(k=>{const el=document.getElementById(k);if(el)el.checked=!!d['chk_'+k];});
+  CURR_CATS.forEach((_,i)=>{const cm=document.getElementById('cm_'+i),cp=document.getElementById('cp_'+i);if(cm)cm.value=d['cm_'+i]||'';if(cp)cp.value=d['cp_'+i]||'';});
+  for(let i=0;i<6;i++){const b=document.getElementById('ben'+i),ind=document.getElementById('ind'+i);if(b)b.value=d['ben'+i]||'';if(ind)ind.value=d['ind'+i]||'';}
+  for(let i=0;i<8;i++){const eq=document.getElementById('eq'+i);if(eq)eq.value=d['eq'+i]||'';}
+  calcStats();
+}
+
+/* ══ LOCALSTORAGE ══ */
+let saveTimer=null;
+function autoSave(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    try{localStorage.setItem(LS_KEY,JSON.stringify(collectData()));showStatus('Salvato ✓');}catch(e){}
+  },800);
+}
+function manualSave(){
+  try{localStorage.setItem(LS_KEY,JSON.stringify(collectData()));showStatus('Salvato ✓');}catch(e){alert('Errore salvataggio.');}
+}
+function loadFromStorage(){
+  try{const r=localStorage.getItem(LS_KEY);if(r)restoreData(JSON.parse(r));}catch(e){}
+}
+
+/* ══ EXPORT / IMPORT ══ */
+function shareOrDownload(blob,filename,msg){
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File([blob],filename,{type:blob.type})]})){
+    const file=new File([blob],filename,{type:blob.type});
+    navigator.share({files:[file],title:'Lex Arcana'}).then(()=>showStatus(msg)).catch(()=>{});
+  } else {
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=filename;a.click();
+    URL.revokeObjectURL(url);showStatus(msg);
+  }
+}
+function exportJSON(){
+  const data=collectData();
+  const nome=document.getElementById('f_nome').value.trim()||'custos';
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  shareOrDownload(blob,`lex_arcana_${nome.replace(/\s+/g,'_')}.json`,'Scheda esportata ✓');
+}
+function importJSON(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{const data=JSON.parse(e.target.result);restoreData(data);localStorage.setItem(LS_KEY,JSON.stringify(data));showStatus('Scheda importata ✓');}
+    catch(e){alert('File JSON non valido.');}
+  };
+  reader.readAsText(file);event.target.value='';
+}
+
+/* ══ RESET ══ */
 function resetAll(){
-  if(!confirm('Vuoi davvero cancellare tutti i dati e iniziare una nuova scheda?')) return;
+  if(!confirm('Cancellare tutti i dati e iniziare una nuova scheda?'))return;
   localStorage.removeItem(LS_KEY);
-  document.querySelectorAll('input:not([type=checkbox]):not([type=file]), textarea').forEach(el=>el.value='');
+  document.querySelectorAll('input:not([type=checkbox]):not([type=file]),textarea').forEach(el=>el.value='');
   document.querySelectorAll('input[type=checkbox]').forEach(el=>el.checked=false);
   document.querySelectorAll('select').forEach(el=>el.value='');
-  pvG.querySelectorAll('.pvb').forEach(b=>b.classList.remove('marked'));
+  pvG.querySelectorAll('.pvb').forEach(b=>{b.classList.remove('marked','above-max');});
+  piG.querySelectorAll('.pb').forEach(b=>{b.classList.remove('spent','above-max');});
   mG.querySelectorAll('.mc').forEach(c=>c.classList.remove('active'));
-  upd();
-  showStatus('Scheda azzerata');
+  document.getElementById('pvMaxLbl').textContent='';
+  document.getElementById('pv-hint').textContent='';
+  document.getElementById('pietas-hint').textContent='';
+  upd();showStatus('Scheda azzerata');
 }
 
-/* ══════════════════════════════════════════════════════
-   STATUS TOAST
-══════════════════════════════════════════════════════ */
-let statusTimer=null;
+/* ══ STATUS ══ */
+let stTimer=null;
 function showStatus(msg){
-  const el=document.getElementById('tbStatus');
-  el.textContent=msg;el.classList.add('show');
-  clearTimeout(statusTimer);
-  statusTimer=setTimeout(()=>el.classList.remove('show'),2500);
+  const el=document.getElementById('tbStatus');el.textContent=msg;el.classList.add('show');
+  clearTimeout(stTimer);stTimer=setTimeout(()=>el.classList.remove('show'),2500);
 }
 
-/* ══════════════════════════════════════════════════════
-   INIT
-══════════════════════════════════════════════════════ */
+/* ══ MOBILE SCALING ══ */
+function applyZoom(){
+  const avail=window.innerWidth-8;
+  const scale=Math.min(1,avail/880);
+  ['so1','so2'].forEach(id=>{
+    const outer=document.getElementById(id);
+    const inner=outer.querySelector('.sheet');
+    outer.style.width=(880*scale)+'px';
+    outer.style.height=(inner.scrollHeight*scale)+'px';
+    outer.style.overflow='hidden';
+    inner.style.transform=`scale(${scale})`;
+    inner.style.transformOrigin='top left';
+  });
+}
+
+/* ══ WIRE AUTO-SAVE ══ */
+function wireAutoSave(){
+  document.querySelectorAll('input:not([type=checkbox]):not([type=file]):not(.mf-inp),select:not(.mf-sel),textarea').forEach(el=>{
+    el.addEventListener('change',autoSave);el.addEventListener('input',autoSave);
+  });
+  document.querySelectorAll('input[type=checkbox]').forEach(el=>el.addEventListener('change',autoSave));
+}
+
+/* ══ INIT ══ */
+loadCustomWeapons();
+rebuildWeaponDropdowns();
 wireAutoSave();
 loadFromStorage();
+window.addEventListener('resize',applyZoom);
+// Apply zoom after sheet renders
+setTimeout(applyZoom,100);
 </script>
 </body>
 </html>
